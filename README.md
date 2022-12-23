@@ -18,3 +18,18 @@ relying on the fact that no one but you should have physical access to your devi
 Will probably be based around storing passwords locally, most likely with SQLite.
 From there, whether the passwords are encrypted or not can be considered,
 but probably won't be for some time.
+
+## Improvements
+
+Basic Encryption would be good to have.
+
+At the moment the passwords are being placed on the clipboard.
+Would be good to be able to clear the clipboard after it is done.
+Could use something like this.
+
+```python
+from ctypes import windll
+if windll.user32.OpenClipboard(None):
+    windll.user32.EmptyClipboard()
+    windll.user32.CloseClipboard()
+```
