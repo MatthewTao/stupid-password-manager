@@ -18,9 +18,16 @@ class PasswordManager:
             ).fetchall()[0]
         
         # 3rd element is the password for now
-        password = password_tuple[3]
-
-        return password
+        password_dict = {
+            "id": password_tuple[0],
+            "name": password_tuple[1],
+            "user": password_tuple[2],
+            "pass": password_tuple[3],
+            "copy_user": password_tuple[4],
+            "copy_pass": password_tuple[5],
+            "encrypted": password_tuple[6]
+        }
+        return password_dict
 
     def list_passwords(self):
         # Get list of passwords from db
@@ -45,5 +52,22 @@ class PasswordManager:
         if pwd_id not in self.passwords:
             raise Exception('Password does not exist')
         else:
-            pwd = self._read_password(int(pwd_id))
-            return pwd
+            pwd_dict = self._read_password(int(pwd_id))
+        
+        # The entire row has now been fetch.
+        # Now process the dict so that the user can use it.
+        if pwd_dict['copy_pass'] == 1 and pwd_dict['copy_user'] == 0 and pwd_dict['encrypted'] == 0:
+            # The password should not be encrypted therefore no futher action needed.
+            # Just need to remove some keys
+            keys_to_remove = ['id', 'name', 'user', 'encrypted']
+
+        elif pwd_dict['copy_pass'] == 1 and pwd_dict['copy_user'] == 1 and pwd_dict['encrypted'] == 0:
+            # The password should not be encrypted therefore no futher action needed.
+            # Just need to remove some keys
+            keys_to_remove = ['id', 'name', 'encrypted']
+        
+        # Remove the keys that won't be used.
+        for key in keys_to_remove:
+            pwd_dict.pop(key, None)
+
+        return pwd_dict
